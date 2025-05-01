@@ -1,23 +1,23 @@
 #!/bin/bash
 set -x
 
-export GPUS_PER_NODE=2
-export CUDA_VISIBLE_DEVICES=0,1
+export GPUS_PER_NODE=3
+export CUDA_VISIBLE_DEVICES=4,5,6
 EPOCH=2
 
 SAVE_PATH=llava_llama3_racer_alltask_lora_debug
-MODEL_PATH=<path_to_downloaded_llama3-llava-next-8b>
+MODEL_PATH=$1
 
+root_path=$(pwd)
 
-
-torchrun --nnodes 1 --nproc_per_node $GPUS_PER_NODE --node_rank 0 --master_addr localhost --master_port 29504 \
+torchrun --nnodes 1 --nproc_per_node $GPUS_PER_NODE --node_rank 0 --master_addr localhost --master_port 29503 \
     llava/train/my_train.py \
     --lora_enable True --lora_r 128 --lora_alpha 256 --mm_projector_lr 2e-5 \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path $MODEL_PATH \
     --version llava_llama_3_racer \
-    --data_path /home/daiyp/Open-LLaVA-NeXT/playground/racer_llava_data/all_tasks.json \
-    --image_folder /home/daiyp/Open-LLaVA-NeXT \
+    --data_path $root_path/playground/racer_llava_data/all_tasks.json \
+    --image_folder $root_path \
     --vision_tower openai/clip-vit-large-patch14-336 \
     --mm_projector_type mlp2x_gelu \
     --image_aspect_ratio anyres \
@@ -49,4 +49,4 @@ torchrun --nnodes 1 --nproc_per_node $GPUS_PER_NODE --node_rank 0 --master_addr 
     --lazy_preprocess True \
     --report_to tensorboard \
     --run_name ${SAVE_PATH} \
-    --lang_level rich
+    --lang_level simple
