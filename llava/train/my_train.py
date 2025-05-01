@@ -197,9 +197,9 @@ class MyLazySupervisedDataset(Dataset):
     
     def get_len(self, item):
         length = len(item["conversations"][0]["task_goal"].split()) + \
-            len(item["conversations"][0]["previous_rich_instruction"].split()) +\
+            len(item["conversations"][0]["previous_simple_instruction"].split()) +\
             len(item["conversations"][0]["robot_delta_state"].split()) if "robot_delta_state" in item["conversations"][0] else 0 + \
-            max(len(item["conversations"][1]["rich_instruction"].split()), len(item["conversations"][1]["heuristic_instruction"].split())) 
+            max(len(item["conversations"][1]["simple_instruction"].split()), len(item["conversations"][1]["heuristic_instruction"].split())) 
         return length
 
     @property
